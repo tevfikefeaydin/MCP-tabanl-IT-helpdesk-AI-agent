@@ -228,9 +228,11 @@ def _rule_based_analyze(ticket: dict) -> dict:
     # Risk degerlendirmesi
     risk = risk_engine.assess_risk(category, tool, text)
 
-    # Otomatik calisabilir mi? High/blocked veya clarification varsa hayir.
+    # Otomatik calisabilir mi? Sadece Low risk, guvenli tool'lar otomatik calisir.
+    # High/blocked, Medium/onay-gerektiren veya clarification varsa otomatik calismaz.
     can_execute = (
         not risk["blocked"]
+        and not risk["requires_approval"]
         and not clarification_needed
         and tool is not None
         and tool != "generate_clarification_question"
@@ -311,7 +313,7 @@ def analyze_ticket(ticket: dict, use_ollama: bool = True, model: str = DEFAULT_M
             merged["requires_approval"] = risk["requires_approval"]
             merged["blocked"] = risk["blocked"]
             merged["risk_reason"] = risk["reason"]
-            if risk["blocked"] or merged.get("clarification_needed"):
+            if risk["blocked"] or risk["requires_approval"] or merged.get("clarification_needed"):
                 merged["can_execute_automatically"] = False
             merged["engine"] = f"ollama:{model}"
             return merged

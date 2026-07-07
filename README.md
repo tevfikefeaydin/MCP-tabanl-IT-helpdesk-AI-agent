@@ -117,7 +117,7 @@ Model adini `src/ai_agent.py` icindeki `DEFAULT_MODEL` degiskeninden degistirebi
 |--------|----------|------|-------------------|
 | **TCK-001** | Mail Attachment Transfer | Low | `rapor.xlsx` fake mailbox'tan fake desktop'a kopyalanir, cevap uretilir |
 | **TCK-002** | Mail Attachment Transfer | Low | Coklu ek → **clarification** (dosya adi sorulur), islem yapilmaz |
-| **TCK-003** | Printer Issue | Medium | Muhasebe_HP_01 icin `reconnect` simule edilir (Approval recommended) |
+| **TCK-003** | Printer Issue | Medium | Muhasebe_HP_01 icin `reconnect` — otomatik calismaz, "IT onayi ver" kutusu ile calistirilir |
 | **TCK-004** | ERP Production Order Check | Low | `100234` emri **read-only** okunur, durumu gosterilir |
 | **TCK-005** | Disk Space | Medium | Disk kullanimi simule edilir, temizlik onerisi (onay ister) |
 | **TCK-006** | VPN Issue | Low | KB'den troubleshooting cevap taslagi, otomatik aksiyon **yok** |
@@ -171,7 +171,7 @@ Model adini `src/ai_agent.py` icindeki `DEFAULT_MODEL` degiskeninden degistirebi
 1. TCK-001 → basarili otomatik cozum (mail eki → masaustu, cevap, kapatma).
 2. TCK-002 → belirsizlik yonetimi (clarification, islem yapmama).
 3. TCK-004 → read-only ERP sorgusu (Low risk, guvenli okuma).
-4. TCK-003 / TCK-005 → Medium risk + "Approval recommended".
+4. TCK-003 / TCK-005 → Medium risk: otomatik calismaz, "IT onayi ver" kutusu ile calistirilir.
 5. TCK-008 → High risk + otomatik engelleme.
 6. Audit Log ve Demo Environment Preview panelleri ile izlenebilirlik.
 

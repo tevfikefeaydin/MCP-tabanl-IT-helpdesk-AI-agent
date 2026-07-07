@@ -331,7 +331,7 @@ content_slide(
     8, "Demo 2", "AI Ne Zaman DURUR?",
     ["TCK-002: coklu ekli dosya -> AI islem yapmaz, soru sorar (clarification)",
      "TCK-004: ERP uretim emri -> read-only okuma (Mock ERP)",
-     "TCK-003 / TCK-005: Medium risk -> 'Approval recommended'",
+     "TCK-003 / TCK-005: Medium risk -> IT onayi gerekir (onay kutusu)",
      "AI belirsizlikte aksiyon almaz, once netlestirme ister",
      "Read-only islemler guvenlidir ama yine de loglanir"],
     "Iyi bir agent, ne zaman duracagini bilen agent'tir. TCK-002'de AI tahmin "
