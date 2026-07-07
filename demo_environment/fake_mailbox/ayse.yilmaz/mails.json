@@ -1,0 +1,18 @@
+[
+  {
+    "mail_id": "MAIL-A-001",
+    "from": "tedarik@demo.local",
+    "subject": "Fatura",
+    "received_at": "2026-07-07 07:55:00",
+    "body": "Odeme icin fatura ektedir.",
+    "attachments": ["fatura.pdf"]
+  },
+  {
+    "mail_id": "MAIL-A-002",
+    "from": "finans@demo.local",
+    "subject": "Analiz Dosyasi",
+    "received_at": "2026-07-06 14:20:00",
+    "body": "Aylik finansal analiz dosyasi ektedir.",
+    "attachments": ["analiz.xlsx"]
+  }
+]

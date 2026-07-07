@@ -1,0 +1,16 @@
+[
+  {
+    "printer_name": "Muhasebe_HP_01",
+    "department": "Muhasebe",
+    "status": "Online",
+    "ip": "192.168.1.50",
+    "location": "Muhasebe Ofisi"
+  },
+  {
+    "printer_name": "Uretim_Zebra_01",
+    "department": "Uretim",
+    "status": "Online",
+    "ip": "192.168.1.60",
+    "location": "Uretim Alani"
+  }
+]

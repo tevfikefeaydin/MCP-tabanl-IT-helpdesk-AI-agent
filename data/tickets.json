@@ -1,0 +1,82 @@
+[
+  {
+    "ticket_id": "TCK-001",
+    "title": "Maildeki rapor dosyasini masaustume tasir misiniz?",
+    "description": "Merhaba, mailimdeki rapor dosyasini masaustume tasir misiniz? Konu basligi 'Aylik Rapor' olan mailde geliyordu.",
+    "requester": "tevfik.aydin",
+    "department": "IT",
+    "status": "Open",
+    "priority": "Low",
+    "created_at": "2026-07-07 09:20:00"
+  },
+  {
+    "ticket_id": "TCK-002",
+    "title": "Maildeki dosyayi masaustume atar misiniz?",
+    "description": "Maildeki dosyayi masaustume atar misiniz?",
+    "requester": "ayse.yilmaz",
+    "department": "Muhasebe",
+    "status": "Open",
+    "priority": "Low",
+    "created_at": "2026-07-07 09:35:00"
+  },
+  {
+    "ticket_id": "TCK-003",
+    "title": "Muhasebe yazicisina cikti gonderemiyorum",
+    "description": "Muhasebe yazicisina cikti gonderemiyorum, kontrol eder misiniz?",
+    "requester": "ayse.yilmaz",
+    "department": "Muhasebe",
+    "status": "Open",
+    "priority": "Medium",
+    "created_at": "2026-07-07 09:50:00"
+  },
+  {
+    "ticket_id": "TCK-004",
+    "title": "100234 numarali uretim emri acik mi?",
+    "description": "100234 numarali uretim emrinin sistemde acik olup olmadigini kontrol eder misiniz?",
+    "requester": "tevfik.aydin",
+    "department": "Uretim",
+    "status": "Open",
+    "priority": "Low",
+    "created_at": "2026-07-07 10:05:00"
+  },
+  {
+    "ticket_id": "TCK-005",
+    "title": "Bilgisayarimda disk dolu gorunuyor",
+    "description": "Bilgisayarimda C diski dolu uyarisi aliyorum. Kontrol eder misiniz?",
+    "requester": "tevfik.aydin",
+    "department": "IT",
+    "status": "Open",
+    "priority": "Medium",
+    "created_at": "2026-07-07 10:20:00"
+  },
+  {
+    "ticket_id": "TCK-006",
+    "title": "VPN baglantisi kuramiyorum",
+    "description": "VPN baglantim calismiyor, baglanirken hata aliyorum.",
+    "requester": "ayse.yilmaz",
+    "department": "Muhasebe",
+    "status": "Open",
+    "priority": "High",
+    "created_at": "2026-07-07 10:35:00"
+  },
+  {
+    "ticket_id": "TCK-007",
+    "title": "Excel bilgisayarimda kurulu mu?",
+    "description": "Bilgisayarimda Excel kurulu mu kontrol eder misiniz?",
+    "requester": "tevfik.aydin",
+    "department": "IT",
+    "status": "Open",
+    "priority": "Low",
+    "created_at": "2026-07-07 10:50:00"
+  },
+  {
+    "ticket_id": "TCK-008",
+    "title": "Admin yetkisi verir misiniz?",
+    "description": "Bilgisayarimda bir islem icin admin yetkisi verir misiniz?",
+    "requester": "ayse.yilmaz",
+    "department": "Muhasebe",
+    "status": "Open",
+    "priority": "High",
+    "created_at": "2026-07-07 11:05:00"
+  }
+]
