@@ -2,3 +2,7 @@ streamlit>=1.30
 pandas>=2.0
 python-dotenv>=1.0
 requests>=2.31
+
+# Opsiyonel: sunum (.pptx) dosyasini yeniden uretmek icin (tools/build_pptx.py)
+# Uygulamayi calistirmak icin gerekli degildir.
+python-pptx>=1.0.0

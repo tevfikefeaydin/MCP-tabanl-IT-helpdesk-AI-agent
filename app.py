@@ -97,6 +97,11 @@ with st.sidebar:
     run_clicked = st.button("⚙️ Run Safe Action", use_container_width=True)
     reply_clicked = st.button("✉️ Generate Reply", use_container_width=True)
     close_clicked = st.button("✅ Close Ticket", use_container_width=True)
+    # Medium risk islemler yalnizca acik IT onayi ile calisir
+    approve_medium = st.checkbox(
+        "IT onayi ver (Medium risk islemler icin)",
+        help="Medium risk islemler otomatik calismaz; calistirmak icin bu kutuyu isaretleyin.",
+    )
     st.markdown("---")
     reset_clicked = st.button("♻️ Reset Demo Data", use_container_width=True)
 
@@ -156,10 +161,37 @@ if run_clicked and ticket:
             auto_executed=False,
             approval_required=True,
         )
+    elif analysis.get("requires_approval") and not approve_medium:
+        # Medium risk: acik IT onayi olmadan otomatik calistirilmaz
+        st.warning(
+            "Bu islem Medium risk seviyesinde oldugu icin IT onayi gerektirir. "
+            "Demo modunda otomatik calistirilmadi. Calistirmak icin sol paneldeki "
+            "'IT onayi ver' kutusunu isaretleyip tekrar 'Run Safe Action'a basiniz."
+        )
+        st.session_state.tool_result = {
+            "success": False,
+            "tool_name": analysis.get("selected_tool"),
+            "message": "Approval required: Medium risk islem onay olmadan calistirilmadi.",
+            "details": {"risk_level": analysis.get("risk_level")},
+        }
+        audit_logger.log_action(
+            ticket_id=ticket["ticket_id"],
+            requester=ticket["requester"],
+            category=analysis["category"],
+            risk_level=analysis["risk_level"],
+            tool_called=analysis.get("selected_tool"),
+            action_status="approval_required",
+            message="Medium risk islem IT onayi bekliyor (calistirilmadi).",
+            auto_executed=False,
+            approval_required=True,
+        )
     else:
+        approved = bool(analysis.get("requires_approval") and approve_medium)
         with st.spinner("Guvenli aksiyon calistiriliyor..."):
             result = ai_agent.execute_action(ticket, analysis)
         st.session_state.tool_result = result
+        if approved:
+            st.info("IT onayi verildi; Medium risk islem onay ile calistirildi.")
         audit_logger.log_action(
             ticket_id=ticket["ticket_id"],
             requester=ticket["requester"],
@@ -168,7 +200,8 @@ if run_clicked and ticket:
             tool_called=result.get("tool_name"),
             action_status="success" if result.get("success") else "failed",
             message=result.get("message", ""),
-            auto_executed=analysis.get("can_execute_automatically", False),
+            # Onayla calisan Medium islem "otomatik" degildir
+            auto_executed=analysis.get("can_execute_automatically", False) and not approved,
             approval_required=analysis.get("requires_approval", False),
         )
 
@@ -183,25 +216,49 @@ if reply_clicked and ticket:
         st.session_state.reply = reply
 
 if close_clicked and ticket:
-    resolution = st.session_state.reply or "Ticket cozuldu (demo)."
-    result = ticket_manager.resolve_ticket(ticket["ticket_id"], resolution)
-    if result.get("success"):
-        analysis = st.session_state.analysis or {}
-        audit_logger.log_action(
-            ticket_id=ticket["ticket_id"],
-            requester=ticket["requester"],
-            category=analysis.get("category", "-"),
-            risk_level=analysis.get("risk_level", "-"),
-            tool_called="close_ticket",
-            action_status="success",
-            message="Ticket 'Resolved' olarak kapatildi.",
-            auto_executed=False,
-            approval_required=False,
+    analysis = st.session_state.analysis
+    tool_result = st.session_state.tool_result
+    # Kapatma on kosullari: analiz yapilmis, blocked degil, cevap uretilmis,
+    # tool bekleniyorsa basariyla calismis olmali.
+    tool_expected = bool(
+        analysis
+        and not analysis.get("clarification_needed")
+        and analysis.get("selected_tool")
+        and analysis.get("selected_tool") != "generate_clarification_question"
+    )
+    if not analysis:
+        st.warning("Once 'Analyze Ticket' butonuna basiniz.")
+    elif analysis.get("blocked"):
+        st.error(
+            "Bu ticket yuksek riskli oldugu icin otomatik 'Resolved' yapilamaz. "
+            "Kapatilmasi bilgi islem yetkilisi onayi gerektirir."
         )
-        st.success(f"{ticket['ticket_id']} kapatildi (Resolved).")
-        st.rerun()
+    elif not st.session_state.reply:
+        st.warning("Once 'Generate Reply' ile cevap taslagi uretip kapatiniz.")
+    elif tool_expected and not (tool_result and tool_result.get("success")):
+        st.warning(
+            "Once 'Run Safe Action' ile islemi calistirip basarili oldugunu "
+            "dogrulayiniz, sonra ticket'i kapatiniz."
+        )
     else:
-        st.error(result.get("message", "Ticket kapatilamadi."))
+        resolution = st.session_state.reply
+        result = ticket_manager.resolve_ticket(ticket["ticket_id"], resolution)
+        if result.get("success"):
+            audit_logger.log_action(
+                ticket_id=ticket["ticket_id"],
+                requester=ticket["requester"],
+                category=analysis.get("category", "-"),
+                risk_level=analysis.get("risk_level", "-"),
+                tool_called="close_ticket",
+                action_status="success",
+                message="Ticket 'Resolved' olarak kapatildi.",
+                auto_executed=False,
+                approval_required=analysis.get("requires_approval", False),
+            )
+            st.success(f"{ticket['ticket_id']} kapatildi (Resolved).")
+            st.rerun()
+        else:
+            st.error(result.get("message", "Ticket kapatilamadi."))
 
 # Ticket'i (olasi guncelleme sonrasi) tekrar oku
 ticket = ticket_manager.get_ticket(selected_id) if selected_id else None
@@ -250,7 +307,10 @@ else:
     st.write(f"**Recommended Action:** {analysis['recommended_action']}")
 
     if analysis.get("requires_approval") and not analysis.get("blocked"):
-        st.warning("Approval recommended: Bu islem IT onayi gerektirebilir (Medium risk).")
+        st.warning(
+            "Onay gerekli: Bu islem Medium risk seviyesindedir. Otomatik calismaz; "
+            "calistirmak icin sol paneldeki 'IT onayi ver' kutusunu isaretleyiniz."
+        )
     if analysis.get("blocked"):
         st.error(f"Blocked: {analysis.get('risk_reason', '')}")
 

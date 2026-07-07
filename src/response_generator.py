@@ -43,8 +43,11 @@ def generate_reply(ticket: dict, analysis: dict, tool_result: dict | None = None
         if tool_result and tool_result.get("success"):
             dest = tool_result.get("details", {}).get("destination", "")
             fname = dest.split("/")[-1] if dest else ""
-        detail = f"Ilgili dosya ({fname}) masaustunuze tasinmistir." if fname else \
-            "Ilgili rapor dosyasi masaustunuze tasinmistir."
+        detail = (
+            f"Ilgili dosya ({fname}) guvenli demo ortaminda masaustunuze kopyalanmistir."
+            if fname
+            else "Ilgili rapor dosyasi guvenli demo ortaminda masaustunuze kopyalanmistir."
+        )
         return _wrap(detail)
 
     if category == "Printer Issue":

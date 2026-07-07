@@ -62,10 +62,12 @@ def reset_demo_data() -> dict:
     """
     summary = {"tickets_reset": 0, "desktop_files_removed": 0, "log_cleared": False}
 
-    # 1) Ticket durumlarini sifirla
+    # 1) Ticket durumlarini sifirla ve kapatma sirasinda eklenen alanlari temizle
     tickets = load_tickets()
     for ticket in tickets:
         ticket["status"] = "Open"
+        for stale_key in ("resolution", "resolved_at", "updated_at"):
+            ticket.pop(stale_key, None)
     utils.write_json(utils.DATA_DIR / "tickets.json", tickets)
     summary["tickets_reset"] = len(tickets)
 

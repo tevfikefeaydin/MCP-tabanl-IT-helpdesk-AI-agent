@@ -142,7 +142,7 @@ belirdigini goster; **Audit Logs** tablosunu goster.
 
 - **TCK-002:** Coklu ekli dosya → AI islem yapmaz, **soru sorar** (clarification)
 - **TCK-004:** ERP uretim emri sorgusu → **read-only** okuma (Mock ERP)
-- **TCK-003 / TCK-005:** Medium risk → "**Approval recommended**" uyarisi
+- **TCK-003 / TCK-005:** Medium risk → otomatik calismaz; "**IT onayi ver**" kutusu isaretlenince calisir
 - AI belirsizlikte **aksiyon almaz**, once netlestirme ister
 - Read-only islemler guvenlidir ama yine de loglanir
 
