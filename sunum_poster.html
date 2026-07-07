@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MCP-Based AI Helpdesk Agent Demo — Sunum Posteri</title>
+<style>
+  :root {
+    --ground: #f4f6f9;
+    --panel: #ffffff;
+    --panel-2: #eef2f7;
+    --ink: #14202e;
+    --ink-soft: #48586b;
+    --line: #dbe2ea;
+    --accent: #148f86;
+    --accent-bright: #2dd4bf;
+    --navy: #0f1b2d;
+    --navy-soft: #1b2a41;
+    --low: #16a34a;
+    --med: #d97706;
+    --high: #dc2626;
+    --mono: ui-monospace, "SF Mono", "Cascadia Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #0b1622;
+      --panel: #12202f;
+      --panel-2: #16273a;
+      --ink: #eaf1f8;
+      --ink-soft: #9db2c8;
+      --line: #22384f;
+      --accent: #2dd4bf;
+      --accent-bright: #5eead4;
+      --navy: #081019;
+      --navy-soft: #12202f;
+    }
+  }
+  :root[data-theme="light"] {
+    --ground: #f4f6f9; --panel: #ffffff; --panel-2: #eef2f7; --ink: #14202e;
+    --ink-soft: #48586b; --line: #dbe2ea; --accent: #148f86; --accent-bright: #2dd4bf;
+    --navy: #0f1b2d; --navy-soft: #1b2a41;
+  }
+  :root[data-theme="dark"] {
+    --ground: #0b1622; --panel: #12202f; --panel-2: #16273a; --ink: #eaf1f8;
+    --ink-soft: #9db2c8; --line: #22384f; --accent: #2dd4bf; --accent-bright: #5eead4;
+    --navy: #081019; --navy-soft: #12202f;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    background:
+      radial-gradient(120% 140% at 88% -10%, rgba(45,212,191,0.18), transparent 55%),
+      var(--navy);
+    color: #eaf1f8;
+    border-bottom: 3px solid var(--accent-bright);
+  }
+  .hero-inner { padding: 56px 24px 48px; max-width: 1120px; margin: 0 auto; }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent-bright);
+    margin: 0 0 18px;
+  }
+  .hero h1 {
+    font-size: clamp(30px, 5.4vw, 54px);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    font-weight: 800;
+    margin: 0 0 14px;
+    text-wrap: balance;
+    color: #fff;
+  }
+  .hero .sub {
+    font-size: clamp(16px, 2.2vw, 21px);
+    color: var(--accent-bright);
+    font-weight: 500;
+    margin: 0 0 26px;
+    max-width: 62ch;
+  }
+  .badges { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+  .badge {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    letter-spacing: 0.02em;
+    padding: 8px 13px;
+    border-radius: 999px;
+    border: 1px solid rgba(94,234,212,0.35);
+    background: rgba(45,212,191,0.08);
+    color: #d7f5ef;
+    white-space: nowrap;
+  }
+  .hero-meta {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(157,178,200,0.22);
+    display: flex; flex-wrap: wrap; gap: 8px 28px;
+    font-size: 14px; color: #b9cadd;
+  }
+  .hero-meta b { color: #fff; font-weight: 600; }
+
+  /* ---------- SLIDES ---------- */
+  .deck { padding: 44px 0 8px; display: flex; flex-direction: column; gap: 20px; }
+  .slide {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 24px 26px;
+    display: grid;
+    grid-template-columns: 64px 1fr 340px;
+    gap: 22px;
+    box-shadow: 0 1px 2px rgba(15,27,45,0.04);
+  }
+  .num {
+    font-family: var(--mono);
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+    padding-top: 4px;
+  }
+  .num small {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--ink-soft);
+    margin-top: 8px;
+  }
+  .kicker {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 6px;
+  }
+  .slide h2 {
+    font-size: 22px;
+    font-weight: 750;
+    letter-spacing: -0.01em;
+    margin: 0 0 14px;
+    text-wrap: balance;
+  }
+  ul.bullets { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
+  ul.bullets li {
+    position: relative;
+    padding-left: 20px;
+    font-size: 15px;
+    color: var(--ink);
+  }
+  ul.bullets li::before {
+    content: "";
+    position: absolute; left: 0; top: 9px;
+    width: 7px; height: 7px; border-radius: 2px;
+    background: var(--accent-bright);
+  }
+  .aside { display: flex; flex-direction: column; gap: 14px; }
+  .note {
+    background: var(--panel-2);
+    border-left: 3px solid var(--accent-bright);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 14px;
+  }
+  .note .lbl, .demo .lbl {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 6px;
+    display: block;
+  }
+  .note p { margin: 0; font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+  .demo {
+    background: var(--navy);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  .demo .lbl { color: var(--accent-bright); }
+  .demo p {
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: #cfe6e2;
+    line-height: 1.5;
+  }
+  .demo .cursor { color: var(--accent-bright); font-weight: 700; }
+
+  .risk {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--mono);
+    font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+    padding: 4px 10px; border-radius: 999px;
+    color: #fff; margin-left: 10px; vertical-align: middle;
+  }
+  .risk.low { background: var(--low); }
+  .risk.med { background: var(--med); }
+  .risk.high { background: var(--high); }
+  .title-row { display: flex; align-items: baseline; flex-wrap: wrap; }
+
+  /* Feature slide (security) emphasis */
+  .slide.feature { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset, 0 8px 24px rgba(20,143,134,0.10); }
+
+  /* ---------- FOOTER ---------- */
+  .foot {
+    margin-top: 34px;
+    background: var(--navy);
+    color: #dbe7f2;
+    border-top: 3px solid var(--accent-bright);
+  }
+  .foot-inner { padding: 40px 24px 48px; max-width: 1120px; margin: 0 auto; }
+  .foot h3 { color: #fff; font-size: 20px; margin: 0 0 18px; letter-spacing: -0.01em; }
+  .integrations { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .integ {
+    border: 1px solid rgba(94,234,212,0.22);
+    border-radius: 10px;
+    padding: 14px 16px;
+    background: rgba(45,212,191,0.05);
+  }
+  .integ .t { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent-bright); }
+  .integ .d { font-size: 14px; color: #cddae8; margin-top: 4px; }
+  .foot .tip {
+    margin-top: 28px; padding-top: 20px;
+    border-top: 1px solid rgba(157,178,200,0.2);
+    font-size: 13.5px; color: #a9bccf;
+  }
+  .foot .tip b { color: var(--accent-bright); }
+
+  /* Theme toggle */
+  .toggle {
+    position: fixed; top: 16px; right: 16px; z-index: 20;
+    font-family: var(--mono); font-size: 12px;
+    background: rgba(15,27,45,0.7); color: #d7f5ef;
+    border: 1px solid rgba(94,234,212,0.4);
+    border-radius: 999px; padding: 7px 13px; cursor: pointer;
+    backdrop-filter: blur(6px);
+  }
+  .toggle:focus-visible { outline: 2px solid var(--accent-bright); outline-offset: 2px; }
+
+  @media (max-width: 860px) {
+    .slide { grid-template-columns: 48px 1fr; }
+    .aside { grid-column: 1 / -1; grid-template-columns: 1fr 1fr; display: grid; }
+  }
+  @media (max-width: 560px) {
+    .aside { grid-template-columns: 1fr; }
+    .num { font-size: 24px; }
+  }
+
+  @media print {
+    .toggle { display: none; }
+    body { background: #fff; }
+    .slide, .hero, .foot { break-inside: avoid; }
+    .deck { gap: 12px; }
+  }
+</style>
+</head>
+<body>
+<button class="toggle" id="themeBtn" aria-label="Temayi degistir">◐ Tema</button>
+
+<header class="hero">
+  <div class="hero-inner">
+    <p class="eyebrow">Staj Sunumu · Klimasan · 2026</p>
+    <h1>MCP-Based AI Helpdesk Agent Demo</h1>
+    <p class="sub">Yapay Zeka Destekli, Guvenli ve Local IT Ticket Automation — konsept prototipi</p>
+    <div class="badges">
+      <span class="badge">Gercek sirket verisi kullanilmadi</span>
+      <span class="badge">Tamamen local &amp; guvenli</span>
+      <span class="badge">AI yalnizca tanimli tool'lari kullanir</span>
+      <span class="badge">Riskli islemler otomatik yapilmaz</span>
+      <span class="badge">Her islem loglanir</span>
+    </div>
+    <div class="hero-meta">
+      <span><b>Hazirlayan:</b> Tevfik Efe Aydin</span>
+      <span><b>Stack:</b> Python · Streamlit · Rule-based / Ollama</span>
+      <span><b>Sure:</b> ~8–10 dk sunum + 3–4 dk demo</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap deck">
+
+  <!-- 02 Problem -->
+  <section class="slide">
+    <div class="num">02<small>PROBLEM</small></div>
+    <div>
+      <p class="kicker">Problem</p>
+      <div class="title-row"><h2>Tekrar Eden Ticket Yuku</h2></div>
+      <ul class="bullets">
+        <li>Ticketlarin buyuk kismi standart ve tekrar eden taleplerdir</li>
+        <li>Ornek: mail eki tasima, yazici sorunu, VPN, disk dolu, program kontrolu</li>
+        <li>Her ticket: oku → anla → kontrol et → islemi yap → cevap yaz → kapat</li>
+        <li>Bu dongu zaman alir ve otomasyona cok uygundur</li>
+      </ul>
+    </div>
+    <div class="aside">
+      <div class="note"><span class="lbl">Konusma Notu</span>
+        <p>Personelin gununun onemli kismi bu basit ama tekrar eden ticketlarla geciyor. Soru: bu surecin ne kadarini yapay zeka <em>guvenli</em> sekilde ustlenebilir?</p></div>
+      <div class="demo"><span class="lbl">Demo Ekrani</span>
+        <p><span class="cursor">›</span> Uygulamayi ac → sol paneldeki Ticket dropdown (8 ornek ticket)</p></div>
+    </div>
+  </section>
+
+  <!-- 03 Cozum -->
+  <section class="slide">
+    <div class="num">03<small>COZUM</small></div>
+    <div>
+      <p class="kicker">Cozum</p>
+      <div class="title-row"><h2>AI Agent + Ticket Automation</h2></div>
+      <ul class="bullets">
+        <li>AI Agent ticketi okur ve niyetini (intent) anlar</li>
+        <li>Kategori ve risk seviyesini belirler</li>
+        <li>Eksik bilgi varsa clarification sorusu uretir</li>
+        <li>Uygun tool'u secer, guvenliyse islemi yapar</li>
+        <li>Cevap taslagi uretir, Audit Log tutar, ticket'i kapatir</li>
+      </ul>
+    </div>
+    <div class="aside">
+      <div class="note"><span class="lbl">Konusma Notu</span>
+        <p>Bu bir sohbet botu <em>degil</em>, gercek bir IT ticket otomasyon prototipi. Agent ticketi bastan sona bir helpdesk uzmani gibi ele aliyor.</p></div>
+      <div class="demo"><span class="lbl">Demo Ekrani</span>
+        <p><span class="cursor">›</span> TCK-001 sec → Analyze / Run / Reply / Close / Reset butonlari</p></div>
+    </div>
+  </section>
+
+  <!-- 04 MCP -->
+  <section class="slide">
+    <div class="num">04<small>KAVRAM</small></div>
+    <div>
+      <p class="kicker">Kavram</p>
+      <div class="title-row"><h2>MCP ve Tool Calling Nedir?</h2></div>
+      <ul class="bullets">
+        <li>MCP: AI'nin dis araclara standart sozlesme ile eristigi mimari</li>
+        <li>Bu demoda gercek MCP server yok — MCP mantigi <em>simule</em> edildi</li>
+        <li>Her tool ayri fonksiyon, standart girdi/cikti sozlesmesi var</li>
+        <li>AI sinirsiz erisemez; yalnizca tanimli tool'lari cagirir</li>
+        <li>Ornek: <code>search_mailbox</code>, <code>copy_attachment_to_desktop</code></li>
+      </ul>
+    </div>
+    <div class="aside">
+      <div class="note"><span class="lbl">Konusma Notu</span>
+        <p>Kritik ilke: AI dogrudan dosya sistemine veya sunuculara erisemez; sadece bizim tanimladigimiz sinirli ve guvenli tool'lari cagirabilir. AI'nin ne yapabilecegini biz belirliyoruz.</p></div>
+      <div class="demo"><span class="lbl">Demo Ekrani</span>
+        <p><span class="cursor">›</span> TCK-001 → Analyze → AI Analysis'te <b>Selected Tool</b> alani</p></div>
+    </div>
+  </section>
+
+  <!-- 05 Mimari -->
+  <section class="slide">
+    <div class="num">05<small>MIMARI</small></div>
+    <div>
+      <p class="kicker">Mimari</p>
+      <div class="title-row"><h2>Sistem Mimarisi</h2></div>
+      <ul class="bullets">
+        <li>Streamlit UI → kullanici arayuzu</li>
+        <li>AI Agent → Ollama (varsa) veya rule-based fallback</li>
+        <li>Risk Engine → Low / Medium / High kararlari</li>
+        <li>MCP Tools (11 adet) + Response Generator + Audit Logger</li>
+        <li>Veri: <code>data/*.json</code> + fake ortam: <code>demo_environment/*</code></li>
+      </ul>
+    </div>
+    <div class="aside">
+      <div class="note"><span class="lbl">Konusma Notu</span>
+        <p>Mimari modulerdir. En onemli detay: AI ne siniflandirirsa siniflandirsin, risk karari <em>her zaman</em> bagimsiz Risk Engine tarafindan yeniden dogrulanir.</p></div>
+      <div class="demo"><span class="lbl">Demo Ekrani</span>
+        <p><span class="cursor">›</span> AI Analysis: Category · Intent · Risk Level · Confidence · Reasoning</p></div>
+    </div>
+  </section>
+
+  <!-- 06 Guvenlik (feature) -->
+  <section class="slide feature">
+    <div class="num">06<small>ANA VURGU</small></div>
+    <div>
+      <p class="kicker">Ana Vurgu</p>
+      <div class="title-row"><h2>Guvenlik: Kontrollu Yetenek</h2><span class="risk high">HIGH → BLOCKED</span></div>
+      <ul class="bullets">
+        <li>Gercek sirket verisi kullanilmadi (mail, SAP/ERP, kullanici PC'si yok)</li>
+        <li>Demo tamamen local ve guvenli — her sey fake klasorlerde simule edilir</li>
+        <li>AI sistemlere sinirsiz erisemez, sadece tanimli tool'lari kullanir</li>
+        <li>Riskli islemler otomatik yapilmaz: High = blocked, Medium = onay gerekir</li>
+        <li>Dosya silme tool'u hic yazilmadi; her islem Audit Log'a yazilir</li>
+      </ul>
+    </div>
+    <div class="aside">
+      <div class="note"><span class="lbl">Konusma Notu</span>
+        <p>Bu slayt projenin kalbi. AI agent'larla ilgili en buyuk endise kontrolsuz erisim. Biz bunu <em>tasarimla</em> cozduk. Mesele guc vermek degil, <b>kontrollu guc</b> vermek.</p></div>
+      <div class="demo"><span class="lbl">Demo Ekrani</span>
+        <p><span class="cursor">›</span> TCK-008 (admin) → Analyze → Run → <b>Blocked</b> uyarisi</p></div>
+    </div>
+  </section>
+
+  <!-- 07 Demo 1 -->
+  <section class="slide">
+    <div class="num">07<small>DEMO 1</small></div>
+    <div>
+      <p class="kicker">Canli Demo</p>
+      <div class="title-row"><h2>Mail Eki → Masaustu (Basari)</h2><span class="risk low">LOW</span></div>
+      <ul class="bullets">
+        <li>TCK-001: "Maildeki rapor dosyasini masaustume tasir misiniz?"</li>
+        <li>Kategori: Mail Attachment Transfer · Tool: <code>copy_attachment_to_desktop</code></li>
+        <li><code>rapor.xlsx</code> fake mailbox'tan fake desktop'a kopyalanir</li>
+        <li>Turkce cevap taslagi uretilir, ticket <b>Resolved</b> olur</li>
+        <li>Islem Audit Log'a yazilir</li>
+      </ul>
+    </div>
+    <div class="aside">
+      <div class="note"><span class="lbl">Konusma Notu</span>
+        <p>Uctan uca basarili akis. Dosya gercekten fake masaustune kopyalaniyor, cevap otomatik uretiliyor, ticket kapaniyor ve hepsi loglaniyor.</p></div>
+      <div class="demo"><span class="lbl">Demo Ekrani</span>
+        <p><span class="cursor">›</span> TCK-001 → Analyze → Run → Reply → Close · Preview'da dosya masaustunde</p></div>
+    </div>
+  </section>
+
+  <!-- 08 Demo 2 -->
+  <section class="slide">
+    <div class="num">08<small>DEMO 2</small></div>
+    <div>
+      <p class="kicker">Canli Demo</p>
+      <div class="title-row"><h2>AI Ne Zaman DURUR?</h2><span class="risk med">MEDIUM</span></div>
+      <ul class="bullets">
+        <li>TCK-002: coklu ekli dosya → AI islem yapmaz, soru sorar (clarification)</li>
+        <li>TCK-004: ERP uretim emri → read-only okuma (Mock ERP)</li>
+        <li>TCK-003 / TCK-005: Medium risk → "Approval recommended"</li>
+        <li>AI belirsizlikte aksiyon almaz, once netlestirme ister</li>
+        <li>Read-only islemler guvenlidir ama yine de loglanir</li>
+      </ul>
+    </div>
+    <div class="aside">
+      <div class="note"><span class="lbl">Konusma Notu</span>
+        <p>Iyi bir agent, ne zaman <em>duracagini</em> bilen agent'tir. TCK-002'de tahmin yurutmuyor, soruyor. TCK-004'te sadece okuyor, hicbir sey degistirmiyor.</p></div>
+      <div class="demo"><span class="lbl">Demo Ekrani</span>
+        <p><span class="cursor">›</span> TCK-002 → Run (clarification) · TCK-004 → Run (100234 = Open)</p></div>
+    </div>
+  </section>
+
+  <!-- 09 Teknik -->
+  <section class="slide">
+    <div class="num">09<small>TEKNIK</small></div>
+    <div>
+      <p class="kicker">Teknik Dayaniklilik</p>
+      <div class="title-row"><h2>Her Ortamda Calisan Demo</h2></div>
+      <ul class="bullets">
+        <li>AI motoru: Ollama local model (varsa) — ornek <code>qwen3:8b</code></li>
+        <li>Model yoksa rule-based fallback devreye girer → demo bozulmaz</li>
+        <li>Kod moduler: her fonksiyonun tek sorumlulugu var</li>
+        <li>Hatalar <code>try/except</code>, yollar <code>pathlib</code> ile yonetilir</li>
+        <li>Tek komutla calisir: <code>streamlit run app.py</code></li>
+      </ul>
+    </div>
+    <div class="aside">
+      <div class="note"><span class="lbl">Konusma Notu</span>
+        <p>Sunum ortaminda internet/GPU olmayabilir. Sistemi iki modlu tasarladim: Ollama varsa gercek LLM, yoksa kural tabanli mod. Demo her ortamda ayni calisiyor.</p></div>
+      <div class="demo"><span class="lbl">Demo Ekrani</span>
+        <p><span class="cursor">›</span> Ustteki AI Motoru rozeti · Reset Demo Data ile sifirla</p></div>
+    </div>
+  </section>
+
+  <!-- 10 Gelecek -->
+  <section class="slide">
+    <div class="num">10<small>GELECEK</small></div>
+    <div>
+      <p class="kicker">Gelecek</p>
+      <div class="title-row"><h2>Konsepten Gercek Sisteme</h2></div>
+      <ul class="bullets">
+        <li>Ticket sistemi: Jira / ServiceNow / OTRS entegrasyonu</li>
+        <li>Mail: Microsoft Graph API ile gercek attachment okuma</li>
+        <li>Endpoint Automation: Intune / SCCM ile cihaz islemleri</li>
+        <li>SAP / ERP: read-only API entegrasyonu</li>
+        <li>Role-based authorization · human approval · SIEM · KPI dashboard</li>
+      </ul>
+    </div>
+    <div class="aside">
+      <div class="note"><span class="lbl">Konusma Notu</span>
+        <p>Bu bir konsept prototipi; amac fikri ve guvenlik mimarisini gostermek. Ayni tool tabanli yapi gelecekte gercek sistemlerle entegre edilebilir. Tesekkurler.</p></div>
+      <div class="demo"><span class="lbl">Demo Ekrani</span>
+        <p><span class="cursor">›</span> Kapanis · Soru-cevapta merak edilen ticket'i canli goster</p></div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <div class="foot-inner">
+    <h3>Gelecek Entegrasyonlar</h3>
+    <div class="integrations">
+      <div class="integ"><div class="t">Ticket System</div><div class="d">Jira / ServiceNow / OTRS</div></div>
+      <div class="integ"><div class="t">Mail</div><div class="d">Microsoft Graph API — attachment okuma</div></div>
+      <div class="integ"><div class="t">Endpoint Automation</div><div class="d">Intune / SCCM — cihaz islemleri</div></div>
+      <div class="integ"><div class="t">ERP</div><div class="d">SAP / ERP read-only API</div></div>
+      <div class="integ"><div class="t">Governance</div><div class="d">Role-based auth · human approval</div></div>
+      <div class="integ"><div class="t">Observability</div><div class="d">SIEM / log monitoring · KPI dashboard</div></div>
+    </div>
+    <p class="tip">Sunum ipucu — Demodan once <b>Reset Demo Data</b> ile temiz basla. En etkili final sirasi:
+      <b>TCK-001</b> (basari) → <b>TCK-002</b> (durus) → <b>TCK-008</b> (engelleme).</p>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var btn = document.getElementById('themeBtn');
+    var root = document.documentElement;
+    btn.addEventListener('click', function () {
+      var cur = root.getAttribute('data-theme');
+      if (!cur) {
+        cur = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      root.setAttribute('data-theme', cur === 'dark' ? 'light' : 'dark');
+    });
+  })();
+</script>
+</body>
+</html>
