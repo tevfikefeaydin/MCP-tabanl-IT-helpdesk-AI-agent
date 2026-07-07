@@ -1,0 +1,22 @@
+[
+  {
+    "category": "VPN Issue",
+    "title": "VPN baglanti sorunlari icin ilk kontroller",
+    "content": "VPN baglantisi kurulamadiginda internet baglantisi, kullanici hesabi, MFA dogrulamasi ve VPN istemcisi versiyonu kontrol edilmelidir."
+  },
+  {
+    "category": "Printer Issue",
+    "title": "Yazici baglanti sorunlari",
+    "content": "Yazici online mi, dogru yazici secilmis mi, varsayilan yazici ayari dogru mu ve ag baglantisi aktif mi kontrol edilmelidir."
+  },
+  {
+    "category": "Disk Space",
+    "title": "Disk dolulugu uyarisi",
+    "content": "Gecici dosyalar, indirilenler klasoru ve eski log dosyalari kontrol edilmelidir. Silme islemleri kullanici veya IT onayi gerektirir."
+  },
+  {
+    "category": "Software Inventory Check",
+    "title": "Yazilim envanteri kontrolu",
+    "content": "Cihazda kurulu yazilimlar envanter kaydindan kontrol edilir. Kurulu degilse yazilim talebi olusturulmalidir."
+  }
+]

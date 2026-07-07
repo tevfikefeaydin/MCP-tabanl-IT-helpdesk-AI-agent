@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.Python
+
+# Sanal ortam
+venv/
+.venv/
+env/
+
+# Ortam degiskenleri
+.env
+
+# Streamlit
+.streamlit/secrets.toml
+
+# IDE
+.vscode/
+.idea/
+
+# Isletim sistemi
+.DS_Store
+Thumbs.db
+
+# Demo runtime ciktilari (fake desktop'a kopyalanan dosyalar ve loglar)
+# Not: .gitkeep dosyalari korunur, calisma zamani uretilen dosyalar izlenmez.
+demo_environment/fake_logs/action_log.jsonl
+demo_environment/fake_desktops/*/Desktop/*
+!demo_environment/fake_desktops/*/Desktop/.gitkeep

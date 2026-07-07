@@ -1,0 +1,26 @@
+[
+  {
+    "mail_id": "MAIL-T-001",
+    "from": "planlama@demo.local",
+    "subject": "Aylik Rapor",
+    "received_at": "2026-07-07 08:10:00",
+    "body": "Merhaba, ekte aylik uretim raporunu iletiyorum.",
+    "attachments": ["rapor.xlsx"]
+  },
+  {
+    "mail_id": "MAIL-T-002",
+    "from": "yonetim@demo.local",
+    "subject": "Haftalik Sunum",
+    "received_at": "2026-07-06 16:40:00",
+    "body": "Toplanti icin hazirladigim sunumu ekte bulabilirsiniz.",
+    "attachments": ["sunum.pdf"]
+  },
+  {
+    "mail_id": "MAIL-T-003",
+    "from": "kalite@demo.local",
+    "subject": "Kalite Formu",
+    "received_at": "2026-07-05 11:15:00",
+    "body": "Doldurulmasi gereken kalite formu ektedir.",
+    "attachments": ["kalite_formu.docx"]
+  }
+]

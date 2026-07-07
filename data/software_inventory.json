@@ -1,0 +1,19 @@
+[
+  {
+    "device_name": "LAPTOP-TEVFIK",
+    "installed_software": [
+      "Microsoft Excel",
+      "Microsoft Teams",
+      "Google Chrome",
+      "SAP GUI"
+    ]
+  },
+  {
+    "device_name": "PC-AYSE",
+    "installed_software": [
+      "Microsoft Word",
+      "Microsoft Teams",
+      "Adobe Reader"
+    ]
+  }
+]

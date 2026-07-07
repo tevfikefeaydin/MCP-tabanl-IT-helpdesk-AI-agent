@@ -1,0 +1,26 @@
+[
+  {
+    "order_id": "100234",
+    "product": "Commercial Cooler Model A",
+    "status": "Open",
+    "plant": "Manisa",
+    "quantity": 250,
+    "last_update": "2026-07-07 08:45:00"
+  },
+  {
+    "order_id": "100235",
+    "product": "Commercial Freezer Model B",
+    "status": "Closed",
+    "plant": "Manisa",
+    "quantity": 120,
+    "last_update": "2026-07-06 17:10:00"
+  },
+  {
+    "order_id": "100236",
+    "product": "Display Cooler Model C",
+    "status": "In Progress",
+    "plant": "Manisa",
+    "quantity": 80,
+    "last_update": "2026-07-07 07:30:00"
+  }
+]

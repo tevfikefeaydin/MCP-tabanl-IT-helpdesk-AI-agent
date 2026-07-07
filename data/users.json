@@ -1,0 +1,22 @@
+[
+  {
+    "username": "tevfik.aydin",
+    "full_name": "Tevfik Efe Aydin",
+    "email": "tevfik.aydin@demo.local",
+    "department": "Intern",
+    "device_name": "LAPTOP-TEVFIK",
+    "desktop_path": "demo_environment/fake_desktops/tevfik.aydin/Desktop",
+    "mailbox_path": "demo_environment/fake_mailbox/tevfik.aydin",
+    "role": "standard_user"
+  },
+  {
+    "username": "ayse.yilmaz",
+    "full_name": "Ayse Yilmaz",
+    "email": "ayse.yilmaz@demo.local",
+    "department": "Muhasebe",
+    "device_name": "PC-AYSE",
+    "desktop_path": "demo_environment/fake_desktops/ayse.yilmaz/Desktop",
+    "mailbox_path": "demo_environment/fake_mailbox/ayse.yilmaz",
+    "role": "standard_user"
+  }
+]
