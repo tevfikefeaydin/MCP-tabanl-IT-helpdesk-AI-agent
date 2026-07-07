@@ -215,6 +215,39 @@
   /* Feature slide (security) emphasis */
   .slide.feature { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset, 0 8px 24px rgba(20,143,134,0.10); }
 
+  /* ---------- ARCHITECTURE DIAGRAM ---------- */
+  .arch {
+    margin-top: 6px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 22px 26px 26px;
+  }
+  .arch .head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-bottom: 4px; }
+  .arch .head .k { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); }
+  .arch h2 { font-size: 22px; font-weight: 750; letter-spacing: -0.01em; margin: 0; }
+  .arch .lead { color: var(--ink-soft); font-size: 14px; margin: 2px 0 16px; max-width: 74ch; }
+  .arch svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .arch text { font-family: var(--sans); }
+  .arch .boxNavy { fill: var(--navy); }
+  .arch .boxPanel { fill: var(--panel-2); }
+  .arch .strokeAccent { stroke: var(--accent-bright); stroke-width: 1.6; }
+  .arch .strokeHigh { stroke: var(--high); stroke-width: 1.6; }
+  .arch .strokeMuted { stroke: var(--line); stroke-width: 1.4; }
+  .arch .chip { fill: var(--accent); }
+  .arch .chip2 { fill: var(--panel); stroke: var(--line); stroke-width: 1; }
+  .arch .tOnNavy { fill: #eaf3fb; }
+  .arch .tOnNavySub { fill: #a9c0d6; }
+  .arch .tOnChip { fill: #04201d; }
+  .arch .tInk { fill: var(--ink); }
+  .arch .tSub { fill: var(--ink-soft); }
+  .arch .flow { stroke: var(--accent-bright); stroke-width: 2.2; fill: none; }
+  .arch .gate {
+    margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line);
+    font-size: 13px; color: var(--ink-soft);
+  }
+  .arch .gate b { color: var(--accent); }
+
   /* ---------- FOOTER ---------- */
   .foot {
     margin-top: 34px;
@@ -290,6 +323,80 @@
     </div>
   </div>
 </header>
+
+<section class="wrap" style="padding-top:36px;">
+  <div class="arch">
+    <div class="head"><span class="k">01 · Mimari</span><h2>Sistem Mimarisi — Akis Diyagrami</h2></div>
+    <p class="lead">Istekler katman katman ilerler; her istek <b>Risk Engine</b> guvenlik kapisindan gecer ve
+      AI yalnizca tanimli <b>MCP Tools</b>'u cagirabilir. Sistemler dogrudan erisime kapalidir.</p>
+    <svg viewBox="0 0 1000 560" role="img" aria-label="Mimari akis diyagrami">
+      <defs>
+        <marker id="arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" style="fill:var(--accent-bright)" />
+        </marker>
+      </defs>
+
+      <!-- flow lines -->
+      <g style="color:inherit">
+        <path class="flow" marker-end="url(#arw)" d="M500,58 L500,80" />
+        <path class="flow" marker-end="url(#arw)" d="M500,132 L500,152" />
+        <!-- AI Agent -> three columns -->
+        <path class="flow" marker-end="url(#arw)" d="M500,232 L500,260 L180,260 L180,288" />
+        <path class="flow" marker-end="url(#arw)" d="M500,232 L500,288" />
+        <path class="flow" marker-end="url(#arw)" d="M500,232 L500,260 L820,260 L820,288" />
+        <!-- MCP Tools -> data layer -->
+        <path class="flow" marker-end="url(#arw)" d="M500,404 L500,416 L270,416 L270,430" />
+        <path class="flow" marker-end="url(#arw)" d="M500,404 L500,416 L730,416 L730,430" />
+      </g>
+
+      <!-- Row 1: Kullanici / Ticket -->
+      <rect class="boxNavy" x="410" y="16" width="180" height="42" rx="9" />
+      <text class="tOnNavy" x="500" y="42" text-anchor="middle" font-size="15" font-weight="700">Kullanici / Ticket</text>
+
+      <!-- Row 2: Streamlit UI -->
+      <rect class="boxNavy" x="190" y="80" width="620" height="52" rx="9" />
+      <text class="tOnNavy" x="500" y="112" text-anchor="middle" font-size="16" font-weight="700">Streamlit UI  ·  app.py</text>
+
+      <!-- Row 3: AI Agent -->
+      <rect class="boxNavy" x="190" y="152" width="620" height="80" rx="10" />
+      <text class="tOnNavy" x="240" y="184" font-size="16" font-weight="700">AI Agent · ai_agent.py</text>
+      <text class="tOnNavySub" x="240" y="206" font-size="12.5">intent + kategori + risk + tool secimi</text>
+      <rect class="chip" x="560" y="170" width="110" height="26" rx="13" />
+      <text class="tOnChip" x="615" y="187" text-anchor="middle" font-size="11.5" font-weight="700">Ollama (varsa)</text>
+      <rect class="chip2" x="560" y="200" width="230" height="24" rx="12" />
+      <text class="tInk" x="675" y="216" text-anchor="middle" font-size="11.5" font-weight="600">Rule-based fallback</text>
+
+      <!-- Row 4: three columns -->
+      <rect class="boxPanel strokeHigh" x="40" y="288" width="280" height="116" rx="10" />
+      <text class="tInk" x="180" y="326" text-anchor="middle" font-size="15" font-weight="700">Risk Engine</text>
+      <text class="tSub" x="180" y="350" text-anchor="middle" font-size="12">Low / Medium / High</text>
+      <text class="tSub" x="180" y="370" text-anchor="middle" font-size="12">High = blocked</text>
+      <text class="tSub" x="180" y="388" text-anchor="middle" font-size="12">Medium = onay</text>
+
+      <rect class="boxPanel strokeAccent" x="360" y="288" width="280" height="116" rx="10" />
+      <text class="tInk" x="500" y="326" text-anchor="middle" font-size="15" font-weight="700">MCP Tools · 11 simule</text>
+      <text class="tSub" x="500" y="352" text-anchor="middle" font-size="12">AI yalnizca tanimli</text>
+      <text class="tSub" x="500" y="370" text-anchor="middle" font-size="12">tool'lari cagirir</text>
+      <text class="tSub" x="500" y="388" text-anchor="middle" font-size="12">(Tool Calling)</text>
+
+      <rect class="boxPanel strokeMuted" x="680" y="288" width="280" height="116" rx="10" />
+      <text class="tInk" x="820" y="326" text-anchor="middle" font-size="14.5" font-weight="700">Response + Audit</text>
+      <text class="tSub" x="820" y="352" text-anchor="middle" font-size="12">Turkce cevap taslagi</text>
+      <text class="tSub" x="820" y="370" text-anchor="middle" font-size="12">+ JSONL audit log</text>
+
+      <!-- Row 5: data layer -->
+      <rect class="boxNavy" x="90" y="430" width="360" height="64" rx="10" />
+      <text class="tOnNavy" x="270" y="458" text-anchor="middle" font-size="14.5" font-weight="700">data/*.json</text>
+      <text class="tOnNavySub" x="270" y="478" text-anchor="middle" font-size="11.5">ticket · user · printer · ERP · software · KB</text>
+
+      <rect class="boxNavy" x="550" y="430" width="360" height="64" rx="10" />
+      <text class="tOnNavy" x="730" y="458" text-anchor="middle" font-size="14.5" font-weight="700">demo_environment/*  (fake)</text>
+      <text class="tOnNavySub" x="730" y="478" text-anchor="middle" font-size="11.5">fake mailbox · desktop · logs</text>
+    </svg>
+    <p class="gate"><b>Guvenlik kapisi:</b> AI dogrudan sistemlere erisemez — her istek Risk Engine'den gecer,
+      yalnizca guvenli tool'lar calisir ve her islem loglanir.</p>
+  </div>
+</section>
 
 <main class="wrap deck">
 

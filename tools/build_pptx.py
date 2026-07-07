@@ -13,6 +13,7 @@ from pptx import Presentation
 from pptx.util import Inches, Pt, Emu
 from pptx.dml.color import RGBColor
 from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
+from pptx.enum.shapes import MSO_SHAPE
 
 # --- Renk paleti (kurumsal navy + buz mavisi accent) ---
 NAVY = RGBColor(0x0F, 0x1B, 0x2D)
@@ -121,6 +122,117 @@ def content_slide(number, kicker, title, bullets, note, demo, risk=None):
     return slide
 
 
+def add_box(slide, x, y, w, h, fill, text, tsize=13, tcolor=WHITE, bold=True,
+            outline=None, subtitle=None, sub_color=None):
+    """Yuvarlak kenarli kutu + ortalanmis metin (opsiyonel alt satir)."""
+    shp = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, x, y, w, h)
+    shp.fill.solid()
+    shp.fill.fore_color.rgb = fill
+    if outline:
+        shp.line.color.rgb = outline
+        shp.line.width = Pt(1.5)
+    else:
+        shp.line.fill.background()
+    tf = shp.text_frame
+    tf.word_wrap = True
+    tf.vertical_anchor = MSO_ANCHOR.MIDDLE
+    p = tf.paragraphs[0]
+    p.alignment = PP_ALIGN.CENTER
+    r = p.add_run(); r.text = text
+    r.font.size = Pt(tsize); r.font.bold = bold; r.font.color.rgb = tcolor
+    r.font.name = "Calibri"
+    if subtitle:
+        p2 = tf.add_paragraph(); p2.alignment = PP_ALIGN.CENTER
+        r2 = p2.add_run(); r2.text = subtitle
+        r2.font.size = Pt(tsize - 3); r2.font.bold = False
+        r2.font.color.rgb = sub_color or tcolor; r2.font.name = "Calibri"
+    return shp
+
+
+def add_down_arrow(slide, cx, y, h, color=ICE_DK, w=Inches(0.22)):
+    """Asagi yonlu ok (akis baglantisi)."""
+    shp = slide.shapes.add_shape(MSO_SHAPE.DOWN_ARROW, cx - w / 2, y, w, h)
+    _fill(shp, color)
+    return shp
+
+
+def diagram_slide(number, kicker, title, note, demo):
+    """Tam genislik mimari akis diyagrami slayti."""
+    slide = prs.slides.add_slide(BLANK)
+    add_rect(slide, 0, 0, W, H, PAPER)
+    add_rect(slide, 0, 0, Inches(0.28), H, ICE)
+    add_rect(slide, 0, 0, W, Inches(1.5), NAVY)
+    add_rect(slide, 0, 0, Inches(0.28), Inches(1.5), ICE)
+    add_text(slide, Inches(0.6), Inches(0.22), Inches(2), Inches(1.1),
+             [[(f"{number:02d}", 40, ICE, True, 0)]], anchor=MSO_ANCHOR.MIDDLE)
+    add_text(slide, Inches(1.7), Inches(0.28), Inches(10.8), Inches(1.0),
+             [[(kicker.upper(), 12, ICE, True, 0)], [(title, 26, WHITE, True, 0)]],
+             anchor=MSO_ANCHOR.MIDDLE, space_after=2)
+
+    cx = Inches(6.66)  # slayt yatay ortasi
+
+    # Row 1: Kullanici / Ticket
+    add_box(slide, Inches(5.0), Inches(1.72), Inches(3.33), Inches(0.52),
+            NAVY_SOFT, "Kullanici / Ticket", tsize=13)
+    add_down_arrow(slide, cx, Inches(2.26), Inches(0.24))
+
+    # Row 2: Streamlit UI
+    add_box(slide, Inches(2.5), Inches(2.52), Inches(8.33), Inches(0.56),
+            ICE_DK, "Streamlit UI  (app.py)", tsize=14)
+    add_down_arrow(slide, cx, Inches(3.10), Inches(0.24))
+
+    # Row 3: AI Agent + iki motor
+    add_box(slide, Inches(2.5), Inches(3.36), Inches(8.33), Inches(0.86),
+            NAVY, "AI Agent  (ai_agent.py)", tsize=15, subtitle="intent + kategori + tool secimi",
+            sub_color=RGBColor(0xAF, 0xC2, 0xD6))
+    add_box(slide, Inches(7.05), Inches(3.5), Inches(1.75), Inches(0.28),
+            ICE, "Ollama (varsa)", tsize=9.5, tcolor=NAVY)
+    add_box(slide, Inches(8.95), Inches(3.5), Inches(1.75), Inches(0.28),
+            RGBColor(0xC9, 0xD6, 0xE4), "Rule-based fallback", tsize=9.5, tcolor=NAVY)
+
+    # Uc kola dagilan oklar
+    for ax in [Inches(2.55), Inches(6.66), Inches(10.75)]:
+        add_down_arrow(slide, ax, Inches(4.24), Inches(0.24))
+
+    # Row 4: Risk Engine | MCP Tools | Response+Audit
+    add_box(slide, Inches(0.7), Inches(4.5), Inches(3.7), Inches(1.0),
+            NAVY_SOFT, "Risk Engine", tsize=13, outline=HIGH,
+            subtitle="Low / Medium / High  ·  High=blocked, Medium=onay",
+            sub_color=RGBColor(0xF2, 0xC9, 0xC9))
+    add_box(slide, Inches(4.81), Inches(4.5), Inches(3.7), Inches(1.0),
+            NAVY_SOFT, "MCP Tools  (11 simule)", tsize=13, outline=ICE,
+            subtitle="AI yalnizca tanimli tool'lari cagirir",
+            sub_color=RGBColor(0xB9, 0xEE, 0xE7))
+    add_box(slide, Inches(8.92), Inches(4.5), Inches(3.7), Inches(1.0),
+            NAVY_SOFT, "Response Gen + Audit Logger", tsize=12.5,
+            subtitle="Turkce cevap + JSONL log",
+            sub_color=RGBColor(0xAF, 0xC2, 0xD6))
+
+    # Row 4 -> Row 5 oklar (iki veri kutusu)
+    add_down_arrow(slide, Inches(3.8), Inches(5.54), Inches(0.22))
+    add_down_arrow(slide, Inches(9.5), Inches(5.54), Inches(0.22))
+
+    # Row 5: Veri katmani
+    add_box(slide, Inches(1.3), Inches(5.78), Inches(5.0), Inches(0.62),
+            ICE_DK, "data/*.json", tsize=12.5,
+            subtitle="ticket · user · printer · ERP · software · KB",
+            sub_color=RGBColor(0xEA, 0xF6, 0xF4))
+    add_box(slide, Inches(7.0), Inches(5.78), Inches(5.0), Inches(0.62),
+            ICE_DK, "demo_environment/*  (fake)", tsize=12.5,
+            subtitle="fake mailbox · desktop · logs",
+            sub_color=RGBColor(0xEA, 0xF6, 0xF4))
+
+    # Alt not seridi
+    add_text(slide, Inches(0.7), Inches(6.62), Inches(11.9), Inches(0.7),
+             [[("Guvenlik kapisi: ", 11, ICE_DK, True, 0),
+               ("AI dogrudan sistemlere erisemez; her istek Risk Engine'den gecer, "
+                "yalnizca guvenli tool'lar calisir ve her islem loglanir.", 11, SLATE, False, 0)]],
+             line_spacing=1.05)
+
+    set_notes(slide, f"[{title}]\n\nKONUSMA NOTU:\n{note}\n\nDEMO EKRANI:\n{demo}")
+    return slide
+
+
 # ---------------------------------------------------------------------------
 # Slayt 1 - Kapak
 # ---------------------------------------------------------------------------
@@ -180,16 +292,12 @@ content_slide(
     "ve guvenli tool'lari cagirabilir.",
     "TCK-001 -> Analyze Ticket -> AI Analysis'te 'Selected Tool' alanini goster.")
 
-content_slide(
-    5, "Mimari", "Sistem Mimarisi",
-    ["Streamlit UI -> kullanici arayuzu",
-     "AI Agent -> Ollama (varsa) veya rule-based fallback",
-     "Risk Engine -> Low / Medium / High kararlari",
-     "MCP Tools (11 adet) + Response Generator + Audit Logger",
-     "Veri: data/*.json + fake ortam: demo_environment/*"],
+diagram_slide(
+    5, "Mimari", "Sistem Mimarisi — Akis Diyagrami",
     "Mimari modulerdir; her katmanin tek sorumlulugu var. En onemli detay: AI ne "
     "siniflandirirsa siniflandirsin, risk karari her zaman bagimsiz Risk Engine "
-    "tarafindan yeniden dogrulanir.",
+    "tarafindan yeniden dogrulanir. Bu diyagram, isteklerin nasil katman katman "
+    "guvenlik kapilarindan gectigini gosterir.",
     "AI Analysis bolumunu tam goster: Category, Intent, Risk Level, Confidence, "
     "Reasoning Summary.")
 
